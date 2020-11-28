@@ -1,25 +1,30 @@
 {
-  "name": "webpack-package",
+  "name": "@hexlet/code",
   "version": "0.1.0",
   "description": "",
   "scripts": {
-    "test": "jest --colors"
+    "test": "jest --colors",
+    "test:watch": "jest --watch --colors"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hexlet-boilerplates/webpack-package.git"
+    "url": "git+https://github.com/vsorrokin/frontend-project-lvl3.git"
   },
-  "author": "Kirill Mokevnin",
+  "author": "Vadim Sorokin",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/hexlet-boilerplates/webpack-package/issues"
+    "url": "https://github.com/vsorrokin/frontend-project-lvl3/issues"
   },
-  "homepage": "https://github.com/hexlet-boilerplates/webpack-package#readme",
+  "homepage": "https://github.com/vsorrokin/frontend-project-lvl3#readme",
   "jest": {
     "verbose": true,
     "testURL": "http://localhost/"
   },
-  "dependencies": {},
+  "dependencies": {
+    "bootstrap": "^4.5.3",
+    "jquery": "^3.5.1",
+    "popper.js": "^1.16.1"
+  },
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@babel/preset-env": "^7.12.7",
@@ -27,6 +32,7 @@
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.6.3",
     "babel-loader": "^8.2.2",
+    "css-loader": "^5.0.1",
     "debug": "^4.3.1",
     "eslint": "^7.14.0",
     "eslint-config-airbnb": "^18.2.1",
@@ -36,6 +42,7 @@
     "html-webpack-plugin": "^4.5.0",
     "jest": "^26.6.3",
     "jest-cli": "^26.6.3",
+    "style-loader": "^2.0.0",
     "webpack": "^5.8.0",
     "webpack-cli": "^4.2.0",
     "webpack-dev-server": "^3.11.0"
