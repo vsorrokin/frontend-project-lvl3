@@ -1,0 +1,17 @@
+const getText = (doc, tag) => doc.querySelector(tag).textContent;
+
+export default (data) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(data, 'application/xml');
+
+  return {
+    title: getText(doc, 'title'),
+    description: getText(doc, 'description'),
+    items: [...doc.querySelectorAll('item')].map((item) => ({
+      title: getText(item, 'title'),
+      link: getText(item, 'link'),
+      pubDate: getText(item, 'pubDate'),
+      description: getText(item, 'description'),
+    })),
+  };
+};

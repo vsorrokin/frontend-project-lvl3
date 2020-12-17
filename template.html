@@ -9,14 +9,16 @@
         <div class="container">
           <div class="row">
             <div class="col-8 mx-auto">
-              <form class="form-row">
+              <form class="form-row" data-form="add-rss">
                 <div class="col">
-                  <input type="text" class="form-control form-control-lg" placeholder="RSS link">
+                  <input type="text" name="link" class="form-control form-control-lg" placeholder="RSS link">
                 </div>
                 <div class="col-auto">
                   <button type="submit" class="btn btn-primary btn-lg px-5">Add</button>
                 </div>
               </form>
+              <div class="feedback text-danger" data-role="process-error"></div>
+              <div class="feedback text-success" data-role="process-success"></div>
             </div>
           </div>
         </div>
