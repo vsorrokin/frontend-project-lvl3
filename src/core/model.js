@@ -6,6 +6,7 @@ export default (i18next) => {
   const submitButton = form.querySelector('button');
   const processErrorContainer = document.querySelector('[data-role="process-error"]');
   const processSuccessMessageContainer = document.querySelector('[data-role="process-success"]');
+  const feedsContainer = document.querySelector('[data-role="feeds"]');
 
   const errorMessages = {
     network: {
@@ -36,6 +37,7 @@ export default (i18next) => {
       submitButton,
       processErrorContainer,
       processSuccessMessageContainer,
+      feedsContainer,
     },
     errorMessages,
   };

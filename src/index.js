@@ -13,6 +13,6 @@ i18next.init({
   resources,
 }).then(() => {
   const model = initModel(i18next);
-  const watchedState = initView(model);
+  const watchedState = initView(model, i18next);
   initController(model, watchedState, i18next);
 });

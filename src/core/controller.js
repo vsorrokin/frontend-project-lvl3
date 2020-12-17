@@ -20,7 +20,10 @@ const updateValidationState = (watchedState, schema) => {
 };
 
 const processRSSContent = (data, watchedState) => {
-  watchedState.feeds[normalizeUrl(watchedState.form.fields.link)] = parseRSS(data);
+  watchedState.feeds = {
+    ...watchedState.feeds,
+    [normalizeUrl(watchedState.form.fields.link)]: parseRSS(data),
+  };
 };
 
 const genRequestLink = (link) => {
@@ -61,6 +64,7 @@ export default ({
       try {
         processRSSContent(res.data.contents, watchedState);
       } catch (err) {
+        console.error(err);
         watchedState.form.processError = errorMessages.rss.invalid;
         watchedState.form.processState = 'failed';
         return;

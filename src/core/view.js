@@ -1,5 +1,16 @@
 import onChange from 'on-change';
 
+const createElement = (selector, textContent = null, attrs = {}) => {
+  const [tag, ...classes] = selector.split('.');
+  const el = document.createElement(tag);
+  el.classList.add(...classes);
+  el.textContent = textContent;
+  Object.entries(attrs).forEach(([attr, value]) => {
+    el.setAttribute(attr, value);
+  });
+  return el;
+};
+
 export default ({
   state,
   elements: {
@@ -7,8 +18,9 @@ export default ({
     submitButton,
     processErrorContainer,
     processSuccessMessageContainer,
+    feedsContainer,
   },
-}) => {
+}, i18next) => {
   const renderErrors = (elements, errors) => {
     Object.entries(elements).forEach(([name, element]) => {
       const errorElement = element.nextElementSibling;
@@ -20,12 +32,58 @@ export default ({
       if (!error) {
         return;
       }
-      const feedbackElement = document.createElement('div');
-      feedbackElement.classList.add('invalid-feedback');
-      feedbackElement.innerHTML = error.message;
+      const feedbackElement = createElement('div.invalid-feedback', error.message);
       element.classList.add('is-invalid');
       element.after(feedbackElement);
     });
+  };
+
+  const renderRSS = (feeds) => {
+    const values = Object.values(feeds);
+
+    feedsContainer.innerHTML = null;
+
+    const feedsEl = createElement('div.row');
+    const feedsCol = createElement('div.col-md-10.col-lg-8.mx-auto');
+    const feedsTitle = createElement('h2', i18next.t('feeds'));
+    const feedsInfoList = createElement('ul.list-group.mb-5');
+    values.forEach(({ title, description }) => {
+      const listItem = createElement('li.list-group-item');
+      const titleEl = createElement('h3', title);
+      const descEl = createElement('p', description);
+      listItem.appendChild(titleEl);
+      listItem.appendChild(descEl);
+      feedsInfoList.appendChild(listItem);
+    });
+    feedsEl.appendChild(feedsCol);
+    feedsCol.appendChild(feedsTitle);
+    feedsCol.appendChild(feedsInfoList);
+
+    const postsEl = createElement('div.row');
+    const postsCol = createElement('div.col-md-10.col-lg-8.mx-auto');
+    const postsTitle = createElement('h2', i18next.t('posts'));
+    const postsList = createElement('ul.list-group');
+    values
+      .reduce((acc, { items }) => [...acc, ...items], [])
+      .forEach(({ title, link }) => {
+        const listItem = createElement('li.list-group-item.d-flex.justify-content-between.align-items-start');
+        const linkEl = createElement('a.font-weight-bold', title, { href: link, target: '_blank' });
+        const buttonEl = createElement('button.btn.btn-primary.btn-sm', i18next.t('preview'), {
+          type: 'button',
+          'data-toggle': 'modal',
+          'data-target': '#modal',
+        });
+        listItem.appendChild(linkEl);
+        listItem.appendChild(buttonEl);
+        postsList.appendChild(listItem);
+      });
+
+    postsEl.appendChild(postsCol);
+    postsCol.appendChild(postsTitle);
+    postsCol.appendChild(postsList);
+
+    feedsContainer.appendChild(feedsEl);
+    feedsContainer.appendChild(postsEl);
   };
 
   const renderProcessError = (el, error) => {
@@ -72,6 +130,9 @@ export default ({
         break;
       case 'form.processSuccessMessage':
         renderSuccessMessage(processSuccessMessageContainer, value);
+        break;
+      case 'feeds':
+        renderRSS(value);
         break;
       default:
         break;
