@@ -28,6 +28,7 @@ export default (i18next) => {
           link: null,
         },
       },
+      feeds: {},
     },
     elements: {
       form,
@@ -38,4 +39,4 @@ export default (i18next) => {
     },
     errorMessages,
   };
-}
+};

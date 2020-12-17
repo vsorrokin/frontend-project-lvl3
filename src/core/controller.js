@@ -1,13 +1,10 @@
 import * as yup from 'yup';
 import axios from 'axios';
+import normalizeUrl from 'normalize-url';
 import { keyBy, isEqual } from 'lodash';
 import parseRSS from '../libs/rssParser';
 
-const schema = yup.object().shape({
-  link: yup.string().required().url(),
-});
-
-const validate = (fields) => {
+const validate = (fields, schema) => {
   try {
     schema.validateSync(fields, { abortEarly: false });
     return {};
@@ -16,14 +13,14 @@ const validate = (fields) => {
   }
 };
 
-const updateValidationState = (watchedState) => {
-  const errors = validate(watchedState.form.fields);
+const updateValidationState = (watchedState, schema) => {
+  const errors = validate(watchedState.form.fields, schema);
   watchedState.form.valid = isEqual(errors, {});
   watchedState.form.errors = errors;
 };
 
-const processRSSContent = (data) => {
-  const RSSContent = parseRSS(data);
+const processRSSContent = (data, watchedState) => {
+  watchedState.feeds[normalizeUrl(watchedState.form.fields.link)] = parseRSS(data);
 };
 
 const genRequestLink = (link) => {
@@ -38,13 +35,21 @@ export default ({
   },
   errorMessages,
 }, watchedState, i18next) => {
+  const schema = yup.object().shape({
+    link: yup
+      .string()
+      .required()
+      .url()
+      .test('rssExists', i18next.t('RSSExists'), (val) => !watchedState.feeds[normalizeUrl(val)]),
+  });
+
   Object.entries(fieldElements).forEach(([name, element]) => {
     element.addEventListener('input', (e) => {
       watchedState.form.fields[name] = e.target.value;
       watchedState.form.processError = null;
       watchedState.form.processSuccessMessage = null;
 
-      updateValidationState(watchedState);
+      updateValidationState(watchedState, schema);
     });
   });
 
@@ -54,7 +59,7 @@ export default ({
 
     axios.get(genRequestLink(watchedState.form.fields.link)).then((res) => {
       try {
-        processRSSContent(res.data.contents);
+        processRSSContent(res.data.contents, watchedState);
       } catch (err) {
         watchedState.form.processError = errorMessages.rss.invalid;
         watchedState.form.processState = 'failed';
