@@ -1,9 +1,7 @@
 export default {
   translation: {
-    name: 'Name',
-    value: 'Value',
-    asc: 'Asc',
-    desc: 'Desc',
-    unsorted: 'Unsorted',
+    networkProblems: 'Network Problems. Try again.',
+    invalidRSS: 'This source doesn\'t contain valid rss',
+    sucessRSSLoad: 'Rss has been loaded',
   },
 };
