@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Новые уроки на Хекслете</title>
+    <description>Практические уроки по программированию</description>
+    <link>https://ru.hexlet.io/</link>
+    <webMaster>info@hexlet.io</webMaster>
+    <item>
+      <title>Объекты-Сущности, Объекты-Значения и внедренные объекты / PHP: Объектно-ориентированный дизайн</title>
+      <guid isPermaLink="false">1882</guid>
+      <link>https://ru.hexlet.io/courses/php-object-oriented-design/lessons/modeling/theory_unit</link>
+      <description>Цель: Познакомиться с основными принципами организации объектов описывающих предметную область</description>
+      <pubDate>Thu, 17 Dec 2020 08:45:28 +0300</pubDate>
+    </item>
+    <item>
+      <title>Списки / Основы вёрстки контента</title>
+      <guid isPermaLink="false">1881</guid>
+      <link>https://ru.hexlet.io/courses/css-content/lessons/list/theory_unit</link>
+      <description>Цель: Изучить виды списков в HTML и способы их стилизации</description>
+      <pubDate>Mon, 14 Dec 2020 17:21:31 +0300</pubDate>
+    </item>
+    <item>
+      <title>Шрифты и работа с ними / Основы вёрстки контента</title>
+      <guid isPermaLink="false">1880</guid>
+      <link>https://ru.hexlet.io/courses/css-content/lessons/fonts/theory_unit</link>
+      <description>Цель: Узнать о способах подключения и выбора шрифтов на странице. Научиться управлять размерами, оформлением и интервалами внутри текста. Изучить обобщённое свойство font</description>
+      <pubDate>Mon, 14 Dec 2020 17:21:28 +0300</pubDate>
+    </item>
+    <item>
+      <title>Стили текста / Основы вёрстки контента</title>
+      <guid isPermaLink="false">1878</guid>
+      <link>https://ru.hexlet.io/courses/css-content/lessons/text/theory_unit</link>
+      <description>Цель: Познакомиться с основными стилями, используемые при оформлении текста</description>
+      <pubDate>Mon, 14 Dec 2020 17:21:24 +0300</pubDate>
+    </item>
+    <item>
+      <title>Введение / Основы вёрстки контента</title>
+      <guid isPermaLink="false">1879</guid>
+      <link>https://ru.hexlet.io/courses/css-content/lessons/intro/theory_unit</link>
+      <description>Цель: Узнать о темах и целях курсах. Познакомиться со структурой уроков и их особенностях</description>
+      <pubDate>Mon, 14 Dec 2020 17:21:20 +0300</pubDate>
+    </item>
+    <item>
+      <title>HTTP-запросы / JS: Асинхронное программирование</title>
+      <guid isPermaLink="false">1877</guid>
+      <link>https://ru.hexlet.io/courses/js-asynchronous-programming/lessons/http/theory_unit</link>
+      <description>Цель: Научиться пользоваться асинхронностью в прикладных задачах (на примере HTTP-клиента axios)</description>
+      <pubDate>Wed, 09 Dec 2020 06:14:25 +0300</pubDate>
+    </item>
+    <item>
+      <title>Сборщики (Builders) / JS: Объектно-ориентированный дизайн</title>
+      <guid isPermaLink="false">1876</guid>
+      <link>https://ru.hexlet.io/courses/js-object-oriented-design/lessons/builder/theory_unit</link>
+      <description>Цель: Познакомиться с поэтапной сборкой сложных объектов используя композицию и текучий интерфейс</description>
+      <pubDate>Tue, 08 Dec 2020 04:20:31 +0300</pubDate>
+    </item>
+    <item>
+      <title>Отрисовка (рендеринг) состояния / JS: Архитектура фронтенда</title>
+      <guid isPermaLink="false">1873</guid>
+      <link>https://ru.hexlet.io/courses/js-frontend-architecture/lessons/rendering/theory_unit</link>
+      <description>Цель: Рассмотреть разные стратегии обновления представления на основе данных</description>
+      <pubDate>Sun, 06 Dec 2020 07:18:57 +0300</pubDate>
+    </item>
+    <item>
+      <title>Состояние отображения (UI State) / JS: Архитектура фронтенда</title>
+      <guid isPermaLink="false">1874</guid>
+      <link>https://ru.hexlet.io/courses/js-frontend-architecture/lessons/ui-state/theory_unit</link>
+      <description>Цель: Познакомиться с понятием UI-состояние и научиться правильно его организовывать не смешивая с данными приложения</description>
+      <pubDate>Sun, 06 Dec 2020 07:13:07 +0300</pubDate>
+    </item>
+    <item>
+      <title>Комплексное состояние / JS: Архитектура фронтенда</title>
+      <guid isPermaLink="false">1875</guid>
+      <link>https://ru.hexlet.io/courses/js-frontend-architecture/lessons/complex-state/theory_unit</link>
+      <description>Цель: Изучить лучшие практики по организации структуры сложного состояния</description>
+      <pubDate>Sun, 06 Dec 2020 07:13:03 +0300</pubDate>
+    </item>
+  </channel>
+</rss>

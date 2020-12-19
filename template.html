@@ -4,6 +4,25 @@
     <title>RSS Reader</title>
   </head>
   <body>
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" data-role="modal-title"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" data-role="modal-body"></div>
+          <div class="modal-footer">
+            <a class="btn btn-primary full-article" href="#" data-role="modal-link" role="button" target="_blank" rel="noopener noreferrer">Full
+              article</a>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <main>
       <div class="jumbotron">
         <div class="container">
@@ -11,10 +30,10 @@
             <div class="col-8 mx-auto">
               <form class="form-row" data-form="add-rss">
                 <div class="col">
-                  <input type="text" name="link" class="form-control form-control-lg" required="true" placeholder="RSS link">
+                  <input data-testid="input" type="text" name="link" class="form-control form-control-lg" required="true" placeholder="RSS link">
                 </div>
                 <div class="col-auto">
-                  <button type="submit" class="btn btn-primary btn-lg px-5">
+                  <button type="submit" class="btn btn-primary btn-lg px-5" data-testid="submit">
                     Add
                   </button>
                 </div>

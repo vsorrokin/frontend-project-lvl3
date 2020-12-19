@@ -1,8 +1,8 @@
 import * as yup from 'yup';
-import axios from 'axios';
 import normalizeUrl from 'normalize-url';
-import { keyBy, isEqual } from 'lodash';
+import { keyBy, isEqual, uniqueId } from 'lodash';
 import parseRSS from '../libs/rssParser';
+import callAPI from '../libs/api';
 
 const validate = (fields, schema) => {
   try {
@@ -20,15 +20,14 @@ const updateValidationState = (watchedState, schema) => {
 };
 
 const processRSSContent = (data, watchedState) => {
+  const parsedRSS = parseRSS(data);
   watchedState.feeds = {
     ...watchedState.feeds,
-    [normalizeUrl(watchedState.form.fields.link)]: parseRSS(data),
+    [normalizeUrl(watchedState.form.fields.link)]: {
+      ...parsedRSS,
+      items: parsedRSS.items.map((item) => ({ ...item, id: uniqueId() })),
+    },
   };
-};
-
-const genRequestLink = (link) => {
-  const encodedLink = encodeURIComponent(link);
-  return `https://api.allorigins.win/get?url=${encodedLink}`;
 };
 
 export default ({
@@ -42,7 +41,7 @@ export default ({
     link: yup
       .string()
       .required()
-      .url()
+      .url(i18next.t('invalidURL'))
       .test('rssExists', i18next.t('RSSExists'), (val) => !watchedState.feeds[normalizeUrl(val)]),
   });
 
@@ -59,12 +58,10 @@ export default ({
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     watchedState.form.processState = 'sending';
-
-    axios.get(genRequestLink(watchedState.form.fields.link)).then((res) => {
+    callAPI(watchedState.form.fields.link).then((res) => {
       try {
         processRSSContent(res.data.contents, watchedState);
       } catch (err) {
-        console.error(err);
         watchedState.form.processError = errorMessages.rss.invalid;
         watchedState.form.processState = 'failed';
         return;
@@ -72,10 +69,20 @@ export default ({
 
       watchedState.form.processState = 'finished';
       watchedState.form.processSuccessMessage = i18next.t('sucessRSSLoad');
-    }).catch((err) => {
+    }).catch(() => {
       watchedState.form.processError = errorMessages.network.error;
       watchedState.form.processState = 'failed';
-      throw err;
     });
+  });
+
+  document.addEventListener('click', (e) => {
+    const { toggle, id } = e.target.dataset;
+    if (toggle !== 'modal') return;
+
+    watchedState.modalItem = Object.values(watchedState.feeds)
+      .reduce((acc, { items }) => [...acc, ...items], [])
+      .find(({ id: itemId }) => itemId === id);
+
+    e.target.parentElement.querySelector('a').classList.remove('font-weight-bold');
   });
 };

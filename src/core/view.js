@@ -19,6 +19,9 @@ export default ({
     processErrorContainer,
     processSuccessMessageContainer,
     feedsContainer,
+    modalBody,
+    modalTitle,
+    modalLink,
   },
 }, i18next) => {
   const renderErrors = (elements, errors) => {
@@ -65,13 +68,19 @@ export default ({
     const postsList = createElement('ul.list-group');
     values
       .reduce((acc, { items }) => [...acc, ...items], [])
-      .forEach(({ title, link }) => {
+      .forEach(({ id, title, link }) => {
         const listItem = createElement('li.list-group-item.d-flex.justify-content-between.align-items-start');
-        const linkEl = createElement('a.font-weight-bold', title, { href: link, target: '_blank' });
+        const linkEl = createElement('a.font-weight-bold', title, {
+          href: link,
+          target: '_blank',
+          'data-testid': 'post-link',
+        });
         const buttonEl = createElement('button.btn.btn-primary.btn-sm', i18next.t('preview'), {
           type: 'button',
           'data-toggle': 'modal',
           'data-target': '#modal',
+          'data-id': id,
+          'data-testid': 'preview',
         });
         listItem.appendChild(linkEl);
         listItem.appendChild(buttonEl);
@@ -94,19 +103,29 @@ export default ({
     el.textContent = text;
   };
 
+  const renderModal = ({ description, title, link } = {}) => {
+    modalBody.textContent = description;
+    modalTitle.textContent = title;
+    modalLink.setAttribute('href', link);
+  };
+
   const processStateHandler = (processState) => {
     switch (processState) {
       case 'failed':
         submitButton.disabled = false;
+        fieldElements.link.disabled = false;
         break;
       case 'filling':
         submitButton.disabled = false;
+        fieldElements.link.disabled = false;
         break;
       case 'sending':
         submitButton.disabled = true;
+        fieldElements.link.disabled = true;
         break;
       case 'finished':
         submitButton.disabled = false;
+        fieldElements.link.disabled = false;
         fieldElements.link.value = null;
         break;
       default:
@@ -133,6 +152,9 @@ export default ({
         break;
       case 'feeds':
         renderRSS(value);
+        break;
+      case 'modalItem':
+        renderModal(value);
         break;
       default:
         break;

@@ -10,7 +10,6 @@ export default (data) => {
     items: [...doc.querySelectorAll('item')].map((item) => ({
       title: getText(item, 'title'),
       link: getText(item, 'link'),
-      pubDate: getText(item, 'pubDate'),
       description: getText(item, 'description'),
     })),
   };

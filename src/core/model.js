@@ -7,6 +7,9 @@ export default (i18next) => {
   const processErrorContainer = document.querySelector('[data-role="process-error"]');
   const processSuccessMessageContainer = document.querySelector('[data-role="process-success"]');
   const feedsContainer = document.querySelector('[data-role="feeds"]');
+  const modalBody = document.querySelector('[data-role="modal-body"]');
+  const modalTitle = document.querySelector('[data-role="modal-title"]');
+  const modalLink = document.querySelector('[data-role="modal-link"]');
 
   const errorMessages = {
     network: {
@@ -30,6 +33,7 @@ export default (i18next) => {
         },
       },
       feeds: {},
+      modalItem: null,
     },
     elements: {
       form,
@@ -38,6 +42,9 @@ export default (i18next) => {
       processErrorContainer,
       processSuccessMessageContainer,
       feedsContainer,
+      modalBody,
+      modalTitle,
+      modalLink,
     },
     errorMessages,
   };
