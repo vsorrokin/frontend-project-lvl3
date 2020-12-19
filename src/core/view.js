@@ -19,6 +19,7 @@ export default ({
     processErrorContainer,
     processSuccessMessageContainer,
     feedsContainer,
+    postsContainer,
     modalBody,
     modalTitle,
     modalLink,
@@ -41,16 +42,12 @@ export default ({
     });
   };
 
-  const renderRSS = (feeds) => {
-    const values = Object.values(feeds);
-
+  const renderFeeds = (feeds) => {
     feedsContainer.innerHTML = null;
 
-    const feedsEl = createElement('div.row');
-    const feedsCol = createElement('div.col-md-10.col-lg-8.mx-auto');
     const feedsTitle = createElement('h2', i18next.t('feeds'));
     const feedsInfoList = createElement('ul.list-group.mb-5');
-    values.forEach(({ title, description }) => {
+    feeds.forEach(({ title, description }) => {
       const listItem = createElement('li.list-group-item');
       const titleEl = createElement('h3', title);
       const descEl = createElement('p', description);
@@ -58,16 +55,18 @@ export default ({
       listItem.appendChild(descEl);
       feedsInfoList.appendChild(listItem);
     });
-    feedsEl.appendChild(feedsCol);
-    feedsCol.appendChild(feedsTitle);
-    feedsCol.appendChild(feedsInfoList);
 
-    const postsEl = createElement('div.row');
-    const postsCol = createElement('div.col-md-10.col-lg-8.mx-auto');
+    feedsContainer.appendChild(feedsTitle);
+    feedsContainer.appendChild(feedsInfoList);
+  };
+
+  const renderPosts = (posts) => {
+    postsContainer.innerHTML = null;
+
     const postsTitle = createElement('h2', i18next.t('posts'));
     const postsList = createElement('ul.list-group');
-    values
-      .reduce((acc, { items }) => [...acc, ...items], [])
+
+    posts
       .forEach(({ id, title, link }) => {
         const listItem = createElement('li.list-group-item.d-flex.justify-content-between.align-items-start');
         const linkEl = createElement('a.font-weight-bold', title, {
@@ -87,12 +86,8 @@ export default ({
         postsList.appendChild(listItem);
       });
 
-    postsEl.appendChild(postsCol);
-    postsCol.appendChild(postsTitle);
-    postsCol.appendChild(postsList);
-
-    feedsContainer.appendChild(feedsEl);
-    feedsContainer.appendChild(postsEl);
+    postsContainer.appendChild(postsTitle);
+    postsContainer.appendChild(postsList);
   };
 
   const renderProcessError = (el, error) => {
@@ -151,7 +146,10 @@ export default ({
         renderSuccessMessage(processSuccessMessageContainer, value);
         break;
       case 'feeds':
-        renderRSS(value);
+        renderFeeds(value);
+        break;
+      case 'posts':
+        renderPosts(value);
         break;
       case 'modalItem':
         renderModal(value);

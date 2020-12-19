@@ -6,7 +6,8 @@ export default (i18next) => {
   const submitButton = form.querySelector('button');
   const processErrorContainer = document.querySelector('[data-role="process-error"]');
   const processSuccessMessageContainer = document.querySelector('[data-role="process-success"]');
-  const feedsContainer = document.querySelector('[data-role="feeds"]');
+  const feedsContainer = document.querySelector('#feeds');
+  const postsContainer = document.querySelector('#posts');
   const modalBody = document.querySelector('[data-role="modal-body"]');
   const modalTitle = document.querySelector('[data-role="modal-title"]');
   const modalLink = document.querySelector('[data-role="modal-link"]');
@@ -32,7 +33,8 @@ export default (i18next) => {
           link: null,
         },
       },
-      feeds: {},
+      feeds: [],
+      posts: [],
       modalItem: null,
     },
     elements: {
@@ -42,6 +44,7 @@ export default (i18next) => {
       processErrorContainer,
       processSuccessMessageContainer,
       feedsContainer,
+      postsContainer,
       modalBody,
       modalTitle,
       modalLink,

@@ -108,6 +108,10 @@ test('RSS feeds add', async () => {
   expect(await screen.findByText(/Стили текста \/ Основы вёрстки контента/i)).toBeInTheDocument();
   expect(await screen.findByText(/Сборщики \(Builders\) \/ JS: Объектно-ориентированный дизайн/i)).toBeInTheDocument();
   expect(await screen.findByText(/Комплексное состояние \/ JS: Архитектура фронтенда/i)).toBeInTheDocument();
+
+  expect((await screen.findAllByText(new RegExp(texts.posts, 'i'))).length).toBe(1);
+  const postLinks = await screen.findAllByTestId('post-link');
+  expect(postLinks[0]).toHaveTextContent('Объекты-Сущности, Объекты-Значения и внедренные объекты / PHP: Объектно-ориентированный дизайн');
 });
 
 test('Preview news in modal', async () => {

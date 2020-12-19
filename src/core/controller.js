@@ -20,14 +20,18 @@ const updateValidationState = (watchedState, schema) => {
 };
 
 const processRSSContent = (data, watchedState) => {
-  const parsedRSS = parseRSS(data);
-  watchedState.feeds = {
-    ...watchedState.feeds,
-    [normalizeUrl(watchedState.form.fields.link)]: {
-      ...parsedRSS,
-      items: parsedRSS.items.map((item) => ({ ...item, id: uniqueId() })),
-    },
-  };
+  const { title, description, items } = parseRSS(data);
+
+  watchedState.feeds = [{
+    link: normalizeUrl(watchedState.form.fields.link),
+    title,
+    description,
+  }, ...watchedState.feeds];
+
+  watchedState.posts = [
+    ...items.map((item) => ({ ...item, id: uniqueId() })),
+    ...watchedState.posts,
+  ];
 };
 
 export default ({
@@ -42,7 +46,7 @@ export default ({
       .string()
       .required()
       .url(i18next.t('invalidURL'))
-      .test('rssExists', i18next.t('RSSExists'), (val) => !watchedState.feeds[normalizeUrl(val)]),
+      .test('rssExists', i18next.t('RSSExists'), (val) => !watchedState.feeds.find(({ link }) => normalizeUrl(link) === val)),
   });
 
   Object.entries(fieldElements).forEach(([name, element]) => {
@@ -79,10 +83,38 @@ export default ({
     const { toggle, id } = e.target.dataset;
     if (toggle !== 'modal') return;
 
-    watchedState.modalItem = Object.values(watchedState.feeds)
-      .reduce((acc, { items }) => [...acc, ...items], [])
-      .find(({ id: itemId }) => itemId === id);
+    watchedState.modalItem = watchedState.posts.find(({ id: itemId }) => itemId === id);
 
     e.target.parentElement.querySelector('a').classList.remove('font-weight-bold');
   });
+
+  const updateFeeds = () => {
+    const timeout = 5000;
+    const feedLinks = watchedState.feeds.map((it) => it.link);
+
+    if (!feedLinks.length) {
+      setTimeout(updateFeeds, timeout);
+      return;
+    }
+
+    Promise.all(feedLinks.map((link) => callAPI(link))).then((res) => {
+      const newPosts = res.flatMap(({ data: { contents } }) => parseRSS(contents).items);
+      const currentPosts = watchedState.posts;
+
+      const diffPosts = newPosts.filter(
+        ({ title }) => !currentPosts.find((it) => it.title === title),
+      ).map((item) => ({ ...item, id: uniqueId() }));
+
+      if (diffPosts.length) {
+        watchedState.posts = [
+          ...diffPosts,
+          ...watchedState.posts,
+        ];
+      }
+    }).finally(() => {
+      setTimeout(updateFeeds, timeout);
+    });
+  };
+
+  updateFeeds();
 };
