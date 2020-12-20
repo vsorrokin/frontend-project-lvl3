@@ -6,6 +6,7 @@
     "test": "jest --colors",
     "test:watch": "jest --watch --colors"
   },
+  "main": "src/init.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vsorrokin/frontend-project-lvl3.git"
@@ -16,8 +17,7 @@
     "url": "https://github.com/vsorrokin/frontend-project-lvl3/issues"
   },
   "homepage": "https://github.com/vsorrokin/frontend-project-lvl3#readme",
-  "jest": {
-  },
+  "jest": {},
   "dependencies": {
     "axios": "^0.21.0",
     "bootstrap": "^4.5.3",
@@ -27,7 +27,8 @@
     "normalize-url": "^5.3.0",
     "on-change": "^2.2.0",
     "popper.js": "^1.16.1",
-    "yup": "^0.32.8"
+    "yup": "^0.32.8",
+    "@hexlet/code": "file:."
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

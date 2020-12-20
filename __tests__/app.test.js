@@ -5,7 +5,7 @@ import { screen } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import axios from 'axios';
 import nock from 'nock';
-import initApp from '../src/init';
+import initApp from '@hexlet/code';
 import locales from '../src/locales/en';
 import { BASE_URL, ENDPOINT } from '../src/libs/api';
 
