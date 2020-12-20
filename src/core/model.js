@@ -1,7 +1,7 @@
 export default (i18next) => {
   const form = document.querySelector('[data-form="add-rss"]');
   const fieldElements = {
-    link: form.querySelector('[name="link"]'),
+    link: form.querySelector('[name="url"]'),
   };
   const submitButton = form.querySelector('button');
   const processErrorContainer = document.querySelector('[data-role="process-error"]');
