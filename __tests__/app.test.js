@@ -45,7 +45,7 @@ beforeEach(async () => {
 
 test('Validation: URL', async () => {
   userEvent.type(elements.input, 'not_url');
-  expect(await screen.getByText(new RegExp(texts.invalidURL, 'i'))).toBeInTheDocument();
+  expect(screen.getByText(new RegExp(texts.invalidURL, 'i'))).toBeInTheDocument();
 });
 
 test('Validation: incorrect RSS link', async () => {
