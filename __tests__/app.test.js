@@ -74,12 +74,12 @@ test('Request sending form disabled', async () => {
   userEvent.type(elements.input, rssLink1);
   userEvent.click(elements.submit);
   expect(elements.submit).toBeDisabled();
-  expect(elements.input).toBeDisabled();
+  expect(elements.input).toHaveAttribute('readonly');
 
   expect(await screen.findByText(new RegExp(texts.sucessRSSLoad, 'i'))).toBeInTheDocument();
 
   expect(elements.submit).toBeEnabled();
-  expect(elements.input).toBeEnabled();
+  expect(elements.input).not.toHaveAttribute('readonly');
 });
 
 test('Network error message', async () => {

@@ -1,12 +1,12 @@
 export default {
   translation: {
-    networkProblems: 'Network Problems. Try again.',
+    networkProblems: 'Network error',
     invalidRSS: 'This source doesn\'t contain valid RSS',
-    sucessRSSLoad: 'RSS successfully added',
+    sucessRSSLoad: 'Rss has been loaded',
     RSSExists: 'RSS already exists',
     feeds: 'Feeds',
     posts: 'Posts',
     preview: 'Preview',
-    invalidURL: 'Please enter correct URL',
+    invalidURL: 'Must be valid url',
   },
 };

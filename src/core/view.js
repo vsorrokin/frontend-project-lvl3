@@ -108,19 +108,19 @@ export default ({
     switch (processState) {
       case 'failed':
         submitButton.disabled = false;
-        fieldElements.link.disabled = false;
+        fieldElements.link.readOnly = false;
         break;
       case 'filling':
         submitButton.disabled = false;
-        fieldElements.link.disabled = false;
+        fieldElements.link.readOnly = false;
         break;
       case 'sending':
         submitButton.disabled = true;
-        fieldElements.link.disabled = true;
+        fieldElements.link.readOnly = true;
         break;
       case 'finished':
         submitButton.disabled = false;
-        fieldElements.link.disabled = false;
+        fieldElements.link.readOnly = false;
         fieldElements.link.value = null;
         break;
       default:
