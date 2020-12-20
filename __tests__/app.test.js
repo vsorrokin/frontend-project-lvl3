@@ -33,7 +33,7 @@ const applyNock = (url, response) => {
 };
 
 beforeEach(async () => {
-  const pathToHtml = resolve(__dirname, '../template.html');
+  const pathToHtml = resolve(__dirname, '../index.html');
   const html = fs.readFileSync(pathToHtml, 'utf8');
   document.body.innerHTML = html;
 
