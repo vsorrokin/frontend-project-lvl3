@@ -37,7 +37,7 @@ beforeEach(async () => {
   const html = fs.readFileSync(pathToHtml, 'utf8');
   document.body.innerHTML = html;
 
-  elements.input = screen.getByTestId('input');
+  elements.input = screen.getByRole('textbox', { name: 'url' });
   elements.submit = screen.getByTestId('submit');
 
   await initApp();
