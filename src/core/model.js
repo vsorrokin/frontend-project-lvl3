@@ -1,4 +1,4 @@
-export default (i18next) => {
+export default () => {
   const form = document.querySelector('[data-form="add-rss"]');
   const fieldElements = {
     link: form.querySelector('[name="url"]'),
@@ -11,15 +11,6 @@ export default (i18next) => {
   const modalBody = document.querySelector('[data-role="modal-body"]');
   const modalTitle = document.querySelector('[data-role="modal-title"]');
   const modalLink = document.querySelector('[data-role="modal-link"]');
-
-  const errorMessages = {
-    network: {
-      error: i18next.t('networkProblems'),
-    },
-    rss: {
-      invalid: i18next.t('invalidRSS'),
-    },
-  };
 
   return {
     state: {
@@ -49,6 +40,5 @@ export default (i18next) => {
       modalTitle,
       modalLink,
     },
-    errorMessages,
   };
 };

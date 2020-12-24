@@ -1,8 +1,15 @@
 import * as yup from 'yup';
-import normalizeUrl from 'normalize-url';
-import { keyBy, isEqual, uniqueId } from 'lodash';
+import {
+  keyBy,
+  isEqual,
+  uniqueId,
+  differenceWith,
+} from 'lodash';
 import parseRSS from '../libs/rssParser';
 import callAPI from '../libs/api';
+import yupLocale from '../locales/yup.js';
+
+const feedLinks = [];
 
 const validate = (fields, schema) => {
   try {
@@ -21,17 +28,19 @@ const updateValidationState = (watchedState, schema) => {
 
 const processRSSContent = (data, watchedState) => {
   const { title, description, items } = parseRSS(data);
-
+  const { link: feedLink } = watchedState.form.fields;
   watchedState.feeds = [{
-    link: normalizeUrl(watchedState.form.fields.link),
+    link: feedLink,
     title,
     description,
   }, ...watchedState.feeds];
 
   watchedState.posts = [
-    ...items.map((item) => ({ ...item, id: uniqueId() })),
+    ...items.map((item) => ({ ...item, id: uniqueId(), read: false })),
     ...watchedState.posts,
   ];
+
+  feedLinks.push(feedLink);
 };
 
 export default ({
@@ -39,14 +48,24 @@ export default ({
     fieldElements,
     form,
   },
-  errorMessages,
 }, watchedState, i18next) => {
+  const errorMessages = {
+    network: {
+      error: i18next.t('networkProblems'),
+    },
+    rss: {
+      invalid: i18next.t('invalidRSS'),
+    },
+  };
+
+  yup.setLocale(yupLocale);
   const schema = yup.object().shape({
     link: yup
       .string()
       .required()
-      .url(i18next.t('invalidURL'))
-      .test('rssExists', i18next.t('RSSExists'), (val) => !watchedState.feeds.find(({ link }) => normalizeUrl(link) === val)),
+      .url()
+      .test('rssExists', { key: 'RSSExists' }, (val) => !feedLinks.includes(val)),
+    // .notOneOf(feedLinks),
   });
 
   Object.entries(fieldElements).forEach(([name, element]) => {
@@ -62,6 +81,7 @@ export default ({
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     watchedState.form.processState = 'sending';
+
     callAPI(watchedState.form.fields.link).then((res) => {
       try {
         processRSSContent(res.data.contents, watchedState);
@@ -83,27 +103,26 @@ export default ({
     const { toggle, id } = e.target.dataset;
     if (toggle !== 'modal') return;
 
-    watchedState.modalItem = watchedState.posts.find(({ id: itemId }) => itemId === id);
+    const currentPost = watchedState.posts.find(({ id: postId }) => postId === id);
+    if (!currentPost) return;
 
-    e.target.parentElement.querySelector('a').classList.remove('font-weight-bold');
+    watchedState.modalItem = currentPost;
+
+    watchedState.posts = watchedState.posts.map((post) => {
+      if (post.id === id) {
+        return { ...post, read: true };
+      }
+      return post;
+    });
   });
 
   const updateFeeds = () => {
     const timeout = 5000;
-    const feedLinks = watchedState.feeds.map((it) => it.link);
-
-    if (!feedLinks.length) {
-      setTimeout(updateFeeds, timeout);
-      return;
-    }
 
     Promise.all(feedLinks.map((link) => callAPI(link))).then((res) => {
       const newPosts = res.flatMap(({ data: { contents } }) => parseRSS(contents).items);
       const currentPosts = watchedState.posts;
-
-      const diffPosts = newPosts.filter(
-        ({ title }) => !currentPosts.find((it) => it.title === title),
-      ).map((item) => ({ ...item, id: uniqueId() }));
+      const diffPosts = differenceWith(newPosts, currentPosts, (a, b) => a.title === b.title);
 
       if (diffPosts.length) {
         watchedState.posts = [

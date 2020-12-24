@@ -8,5 +8,6 @@ export default {
     posts: 'Posts',
     preview: 'Preview',
     invalidURL: 'Must be valid url',
+    required: 'URL is required',
   },
 };

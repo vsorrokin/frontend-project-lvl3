@@ -36,7 +36,7 @@ export default ({
       if (!error) {
         return;
       }
-      const feedbackElement = createElement('div.invalid-feedback', error.message);
+      const feedbackElement = createElement('div.invalid-feedback', i18next.t(error.message.key));
       element.classList.add('is-invalid');
       element.after(feedbackElement);
     });
@@ -67,9 +67,15 @@ export default ({
     const postsList = createElement('ul.list-group');
 
     posts
-      .forEach(({ id, title, link }) => {
+      .forEach(({
+        id,
+        title,
+        link,
+        read,
+      }) => {
         const listItem = createElement('li.list-group-item.d-flex.justify-content-between.align-items-start');
-        const linkEl = createElement('a.font-weight-bold', title, {
+        const linkClass = read ? '' : '.font-weight-bold';
+        const linkEl = createElement(`a${linkClass}`, title, {
           href: link,
           target: '_blank',
           'data-testid': 'post-link',

@@ -11,7 +11,7 @@ export default () => i18next.init({
   lng: 'en',
   resources,
 }).then(() => {
-  const model = initModel(i18next);
+  const model = initModel();
   const watchedState = initView(model, i18next);
   initController(model, watchedState, i18next);
 });
