@@ -9,8 +9,6 @@ import parseRSS from '../libs/rssParser';
 import callAPI from '../libs/api';
 import yupLocale from '../locales/yup.js';
 
-const feedLinks = [];
-
 const validate = (fields, schema) => {
   try {
     schema.validateSync(fields, { abortEarly: false });
@@ -20,7 +18,13 @@ const validate = (fields, schema) => {
   }
 };
 
-const updateValidationState = (watchedState, schema) => {
+const updateValidationState = (watchedState) => {
+  const baseLinkSchema = yup.string().url().required();
+  const linkSchema = baseLinkSchema.notOneOf(
+    watchedState.feeds.map(({ link }) => link),
+  );
+  const schema = yup.object().shape({ link: linkSchema });
+
   const errors = validate(watchedState.form.fields, schema);
   watchedState.form.valid = isEqual(errors, {});
   watchedState.form.errors = errors;
@@ -39,8 +43,6 @@ const processRSSContent = (data, watchedState) => {
     ...items.map((item) => ({ ...item, id: uniqueId(), read: false })),
     ...watchedState.posts,
   ];
-
-  feedLinks.push(feedLink);
 };
 
 export default ({
@@ -59,14 +61,6 @@ export default ({
   };
 
   yup.setLocale(yupLocale);
-  const schema = yup.object().shape({
-    link: yup
-      .string()
-      .required()
-      .url()
-      .test('rssExists', { key: 'RSSExists' }, (val) => !feedLinks.includes(val)),
-    // .notOneOf(feedLinks),
-  });
 
   Object.entries(fieldElements).forEach(([name, element]) => {
     element.addEventListener('input', (e) => {
@@ -74,7 +68,7 @@ export default ({
       watchedState.form.processError = null;
       watchedState.form.processSuccessMessage = null;
 
-      updateValidationState(watchedState, schema);
+      updateValidationState(watchedState);
     });
   });
 
@@ -119,7 +113,7 @@ export default ({
   const updateFeeds = () => {
     const timeout = 5000;
 
-    Promise.all(feedLinks.map((link) => callAPI(link))).then((res) => {
+    Promise.all(watchedState.feeds.map(({ link }) => callAPI(link))).then((res) => {
       const newPosts = res.flatMap(({ data: { contents } }) => parseRSS(contents).items);
       const currentPosts = watchedState.posts;
       const diffPosts = differenceWith(newPosts, currentPosts, (a, b) => a.title === b.title);

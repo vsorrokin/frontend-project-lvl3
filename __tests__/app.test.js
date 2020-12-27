@@ -121,10 +121,13 @@ test('Preview news in modal', async () => {
   userEvent.click(elements.submit);
 
   const previewBtns = await screen.findAllByTestId('preview');
-  const postLinks = await screen.findAllByTestId('post-link');
+  let postLinks = await screen.findAllByTestId('post-link');
 
   expect(postLinks[2]).toHaveClass('font-weight-bold');
+
   userEvent.click(previewBtns[2]);
+  postLinks = await screen.findAllByTestId('post-link');
+
   expect(postLinks[2]).not.toHaveClass('font-weight-bold');
   expect(postLinks[1]).toHaveClass('font-weight-bold');
   expect(await screen.findByText('Цель: Узнать о способах подключения и выбора шрифтов на странице. Научиться управлять размерами, оформлением и интервалами внутри текста. Изучить обобщённое свойство font')).toBeVisible();
