@@ -13,5 +13,5 @@ export default () => i18next.init({
 }).then(() => {
   const model = initModel();
   const watchedState = initView(model, i18next);
-  initController(model, watchedState, i18next);
+  initController(model, watchedState);
 });

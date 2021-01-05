@@ -1,7 +1,6 @@
 import * as yup from 'yup';
 import {
-  keyBy,
-  isEqual,
+  isEmpty,
   uniqueId,
   differenceWith,
 } from 'lodash';
@@ -9,25 +8,27 @@ import parseRSS from '../libs/rssParser';
 import callAPI from '../libs/api';
 import yupLocale from '../locales/yup.js';
 
+yup.setLocale(yupLocale);
+const baseLinkSchema = yup.string().url().required();
+
 const validate = (fields, schema) => {
   try {
-    schema.validateSync(fields, { abortEarly: false });
+    schema.validateSync(fields);
     return {};
   } catch (e) {
-    return keyBy(e.inner, 'path');
+    return e;
   }
 };
 
 const updateValidationState = (watchedState) => {
-  const baseLinkSchema = yup.string().url().required();
   const linkSchema = baseLinkSchema.notOneOf(
     watchedState.feeds.map(({ link }) => link),
   );
   const schema = yup.object().shape({ link: linkSchema });
 
-  const errors = validate(watchedState.form.fields, schema);
-  watchedState.form.valid = isEqual(errors, {});
-  watchedState.form.errors = errors;
+  const error = validate(watchedState.form.fields, schema);
+  watchedState.form.valid = isEmpty(error);
+  watchedState.form.error = watchedState.form.valid ? null : error;
 };
 
 const processRSSContent = (data, watchedState) => {
@@ -50,23 +51,10 @@ export default ({
     fieldElements,
     form,
   },
-}, watchedState, i18next) => {
-  const errorMessages = {
-    network: {
-      error: i18next.t('networkProblems'),
-    },
-    rss: {
-      invalid: i18next.t('invalidRSS'),
-    },
-  };
-
-  yup.setLocale(yupLocale);
-
+}, watchedState) => {
   Object.entries(fieldElements).forEach(([name, element]) => {
     element.addEventListener('input', (e) => {
       watchedState.form.fields[name] = e.target.value;
-      watchedState.form.processError = null;
-      watchedState.form.processSuccessMessage = null;
 
       updateValidationState(watchedState);
     });
@@ -80,16 +68,13 @@ export default ({
       try {
         processRSSContent(res.data.contents, watchedState);
       } catch (err) {
-        watchedState.form.processError = errorMessages.rss.invalid;
         watchedState.form.processState = 'failed';
         return;
       }
 
       watchedState.form.processState = 'finished';
-      watchedState.form.processSuccessMessage = i18next.t('sucessRSSLoad');
     }).catch(() => {
-      watchedState.form.processError = errorMessages.network.error;
-      watchedState.form.processState = 'failed';
+      watchedState.form.processState = 'failedNetwork';
     });
   });
 
@@ -113,18 +98,25 @@ export default ({
   const updateFeeds = () => {
     const timeout = 5000;
 
-    Promise.all(watchedState.feeds.map(({ link }) => callAPI(link))).then((res) => {
-      const newPosts = res.flatMap(({ data: { contents } }) => parseRSS(contents).items);
-      const currentPosts = watchedState.posts;
-      const diffPosts = differenceWith(newPosts, currentPosts, (a, b) => a.title === b.title);
+    const promises = watchedState.feeds
+      .map(
+        ({ link }) => callAPI(link)
+          .then((res) => {
+            const newPosts = res.flatMap(({ data: { contents } }) => parseRSS(contents).items);
+            const currentPosts = watchedState.posts;
+            const diffPosts = differenceWith(newPosts, currentPosts, (a, b) => a.title === b.title);
 
-      if (diffPosts.length) {
-        watchedState.posts = [
-          ...diffPosts,
-          ...watchedState.posts,
-        ];
-      }
-    }).finally(() => {
+            if (diffPosts.length) {
+              watchedState.posts = [
+                ...diffPosts,
+                ...watchedState.posts,
+              ];
+            }
+          })
+          .catch((e) => console.log(e)),
+      );
+
+    Promise.all(promises).finally(() => {
       setTimeout(updateFeeds, timeout);
     });
   };

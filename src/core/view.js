@@ -15,6 +15,7 @@ export default ({
   state,
   elements: {
     fieldElements,
+    linkError,
     submitButton,
     processErrorContainer,
     processSuccessMessageContainer,
@@ -25,21 +26,14 @@ export default ({
     modalLink,
   },
 }, i18next) => {
-  const renderErrors = (elements, errors) => {
-    Object.entries(elements).forEach(([name, element]) => {
-      const errorElement = element.nextElementSibling;
-      const error = errors[name];
-      if (errorElement) {
-        element.classList.remove('is-invalid');
-        errorElement.remove();
-      }
-      if (!error) {
-        return;
-      }
-      const feedbackElement = createElement('div.invalid-feedback', i18next.t(error.message.key));
-      element.classList.add('is-invalid');
-      element.after(feedbackElement);
-    });
+  const renderError = (error) => {
+    const linkEl = fieldElements.link;
+    linkEl.classList.remove('is-invalid');
+    if (!error) {
+      return;
+    }
+    linkError.textContent = i18next.t(error.message.key);
+    linkEl.classList.add('is-invalid');
   };
 
   const renderFeeds = (feeds) => {
@@ -96,12 +90,12 @@ export default ({
     postsContainer.appendChild(postsList);
   };
 
-  const renderProcessError = (el, error) => {
-    el.textContent = error;
+  const renderProcessError = (text) => {
+    processErrorContainer.textContent = text;
   };
 
-  const renderSuccessMessage = (el, text) => {
-    el.textContent = text;
+  const renderSuccessMessage = (text) => {
+    processSuccessMessageContainer.textContent = text;
   };
 
   const renderModal = ({ description, title, link } = {}) => {
@@ -112,9 +106,15 @@ export default ({
 
   const processStateHandler = (processState) => {
     switch (processState) {
+      case 'failedNetwork':
+        submitButton.disabled = false;
+        fieldElements.link.readOnly = false;
+        renderProcessError(i18next.t('networkProblems'));
+        break;
       case 'failed':
         submitButton.disabled = false;
         fieldElements.link.readOnly = false;
+        renderProcessError(i18next.t('invalidRSS'));
         break;
       case 'filling':
         submitButton.disabled = false;
@@ -128,6 +128,7 @@ export default ({
         submitButton.disabled = false;
         fieldElements.link.readOnly = false;
         fieldElements.link.value = null;
+        renderSuccessMessage(i18next.t('sucessRSSLoad'));
         break;
       default:
         throw new Error(`Unknown state: ${processState}`);
@@ -137,19 +138,15 @@ export default ({
   return onChange(state, (path, value) => {
     switch (path) {
       case 'form.processState':
+        renderProcessError(null);
+        renderSuccessMessage(null);
         processStateHandler(value);
         break;
       case 'form.valid':
         submitButton.disabled = !value;
         break;
-      case 'form.errors':
-        renderErrors(fieldElements, value);
-        break;
-      case 'form.processError':
-        renderProcessError(processErrorContainer, value);
-        break;
-      case 'form.processSuccessMessage':
-        renderSuccessMessage(processSuccessMessageContainer, value);
+      case 'form.error':
+        renderError(value);
         break;
       case 'feeds':
         renderFeeds(value);

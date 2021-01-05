@@ -3,6 +3,7 @@ export default () => {
   const fieldElements = {
     link: form.querySelector('[name="url"]'),
   };
+  const linkError = document.querySelector('[data-role="link-error"]');
   const submitButton = form.querySelector('button');
   const processErrorContainer = document.querySelector('[data-role="process-error"]');
   const processSuccessMessageContainer = document.querySelector('[data-role="process-success"]');
@@ -16,9 +17,7 @@ export default () => {
     state: {
       form: {
         processState: 'filling',
-        errors: {},
-        processError: null,
-        processSuccessMessage: null,
+        error: null,
         valid: true,
         fields: {
           link: null,
@@ -31,6 +30,7 @@ export default () => {
     elements: {
       form,
       fieldElements,
+      linkError,
       submitButton,
       processErrorContainer,
       processSuccessMessageContainer,
