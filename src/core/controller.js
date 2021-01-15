@@ -1,6 +1,5 @@
 import * as yup from 'yup';
 import {
-  isEmpty,
   uniqueId,
   differenceWith,
 } from 'lodash';
@@ -8,26 +7,22 @@ import parseRSS from '../libs/rssParser';
 import callAPI from '../libs/api';
 import yupLocale from '../locales/yup.js';
 
-yup.setLocale(yupLocale);
-const baseLinkSchema = yup.string().url().required();
-
-const validate = (fields, schema) => {
+const validate = (link, schema) => {
   try {
-    schema.validateSync(fields);
-    return {};
+    schema.validateSync(link);
+    return null;
   } catch (e) {
     return e;
   }
 };
 
-const updateValidationState = (watchedState) => {
+const updateValidationState = (watchedState, baseLinkSchema) => {
   const linkSchema = baseLinkSchema.notOneOf(
     watchedState.feeds.map(({ link }) => link),
   );
-  const schema = yup.object().shape({ link: linkSchema });
 
-  const error = validate(watchedState.form.fields, schema);
-  watchedState.form.valid = isEmpty(error);
+  const error = validate(watchedState.form.fields.link, linkSchema);
+  watchedState.form.valid = !error;
   watchedState.form.error = watchedState.form.valid ? null : error;
 };
 
@@ -52,11 +47,14 @@ export default ({
     form,
   },
 }, watchedState) => {
+  yup.setLocale(yupLocale);
+  const baseLinkSchema = yup.string().url().required();
+
   Object.entries(fieldElements).forEach(([name, element]) => {
     element.addEventListener('input', (e) => {
       watchedState.form.fields[name] = e.target.value;
 
-      updateValidationState(watchedState);
+      updateValidationState(watchedState, baseLinkSchema);
     });
   });
 
