@@ -36,7 +36,7 @@ const processRSSContent = (data, watchedState) => {
   }, ...watchedState.feeds];
 
   watchedState.posts = [
-    ...items.map((item) => ({ ...item, id: uniqueId(), read: false })),
+    ...items.map((item) => ({ ...item, id: uniqueId() })),
     ...watchedState.posts,
   ];
 };
@@ -85,12 +85,10 @@ export default ({
 
     watchedState.modalItem = currentPost;
 
-    watchedState.posts = watchedState.posts.map((post) => {
-      if (post.id === id) {
-        return { ...post, read: true };
-      }
-      return post;
-    });
+    watchedState.readPosts = {
+      ...watchedState.readPosts,
+      [id]: true,
+    };
   });
 
   const updateFeeds = () => {
@@ -100,7 +98,7 @@ export default ({
       .map(
         ({ link }) => callAPI(link)
           .then((res) => {
-            const newPosts = res.flatMap(({ data: { contents } }) => parseRSS(contents).items);
+            const newPosts = parseRSS(res.data.contents).items;
             const currentPosts = watchedState.posts;
             const diffPosts = differenceWith(newPosts, currentPosts, (a, b) => a.title === b.title);
 

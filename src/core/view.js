@@ -54,7 +54,8 @@ export default ({
     feedsContainer.appendChild(feedsInfoList);
   };
 
-  const renderPosts = (posts) => {
+  const renderPosts = () => {
+    const { posts, readPosts } = state;
     postsContainer.innerHTML = null;
 
     const postsTitle = createElement('h2', i18next.t('posts'));
@@ -65,10 +66,9 @@ export default ({
         id,
         title,
         link,
-        read,
       }) => {
         const listItem = createElement('li.list-group-item.d-flex.justify-content-between.align-items-start');
-        const linkClass = read ? '' : '.font-weight-bold';
+        const linkClass = readPosts[id] ? '' : '.font-weight-bold';
         const linkEl = createElement(`a${linkClass}`, title, {
           href: link,
           target: '_blank',
@@ -152,7 +152,8 @@ export default ({
         renderFeeds(value);
         break;
       case 'posts':
-        renderPosts(value);
+      case 'readPosts':
+        renderPosts();
         break;
       case 'modalItem':
         renderModal(value);
